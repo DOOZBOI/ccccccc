@@ -482,7 +482,7 @@ function App() {
       {showContact && (
         <div
           id="contact-section"
-          className={`fixed bottom-0 left-0 right-0 w-full overflow-hidden flex flex-col items-center justify-center z-30 bg-transparent opacity-0 animate-fade-in-delayed px-6`}
+          className={`fixed bottom-0 left-0 right-0 w-full overflow-hidden flex flex-col items-center justify-center bg-transparent opacity-0 animate-fade-in-delayed px-6 ${mobile ? 'z-[10000]' : 'z-30'}`}
           style={{
             height: window.innerWidth < 768 ? '100svh' : '100vh',
             animationDelay: '0.2s', 

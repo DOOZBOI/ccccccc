@@ -319,7 +319,16 @@ export function VideoThumbnail({ src, title, aspectRatio = "video", className = 
             if (muted) videoAutoplayQueue.releaseAudio(videoRef.current);
             else videoAutoplayQueue.requestAudio(videoRef.current);
           }}
-          onTimeUpdate={() => { if (videoRef.current && !isDragging) setCurrentTime(videoRef.current.currentTime); }}
+          onTimeUpdate={() => {
+            if (!videoRef.current || isDragging) return;
+            // Throttle to ~4fps — the progress bar doesn't need pixel-perfect
+            // updates, and firing setCurrentTime on every frame (~60fps)
+            // means 60 React re-renders/sec per visible video tile. With several
+            // tiles visible on mobile, that's hundreds of re-renders/sec.
+            const now = videoRef.current.currentTime;
+            if (Math.abs(now - currentTime) < 0.25) return;
+            setCurrentTime(now);
+          }}
           onLoadedMetadata={() => { if (videoRef.current) setDuration(videoRef.current.duration); }}
           onError={() => {
             setIsLoading(false); setIsPlaying(false); setVideoError(true);

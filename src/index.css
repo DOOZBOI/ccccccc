@@ -35,10 +35,15 @@ html {
 
 body {
   overflow-x: hidden;
-  -webkit-overflow-scrolling: touch;
   height: auto;
   font-family: 'IBM Plex Sans', sans-serif;
   background: #f5f2ec;
+}
+
+/* Mobile: smooth scroll + momentum scrolling fight the browser's own scroll
+   handling and cause jank. Let the native scroller do its thing. */
+@media (max-width: 767px) {
+  html { scroll-behavior: auto; }
 }
 
 ::selection {
@@ -264,6 +269,12 @@ video { transform: translateZ(0); -webkit-transform: translateZ(0); }
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   box-shadow: 0 4px 24px rgba(0,0,0,0.15);
   cursor: pointer;
+  /* Containment hints: tells the browser this card's internals don't
+     affect the rest of the page, so it can skip layout/paint work for
+     off-screen cards entirely. Big win with 21 video tiles. */
+  contain: layout style paint;
+  content-visibility: auto;
+  content-intrinsic-size: 200px;
 }
 .video-card:hover {
   transform: translateY(-4px) scale(1.01);
@@ -445,6 +456,24 @@ video { transform: translateZ(0); }
   .hero-enter { animation: none; }
   .hero-enter { opacity: 1; transform: none; }
   .transition-all, .transition-opacity, .transition-colors { transition: none; }
+}
+
+/* === MOBILE PERFORMANCE === */
+/* Disable continuous animations that keep the GPU busy on mobile. */
+@media (max-width: 767px) {
+  .stat-card,
+  .stat-number-pulse {
+    animation: none !important;
+  }
+  .portfolio-panel::before {
+    animation: none;
+  }
+  /* backdrop-blur is very expensive on mobile GPUs — replace with solid bg */
+  .backdrop-blur-sm {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    background-color: rgba(0, 0, 0, 0.7);
+  }
 }
 
 

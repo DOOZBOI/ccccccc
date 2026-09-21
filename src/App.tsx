@@ -150,10 +150,15 @@ function App() {
       }).to(desktopParallaxEls, { y: 200, ease: "power1.out" });
     }
 
-    gsap.to(portfolioSectionRef.current, {
-      y: -900,
-      scrollTrigger: { trigger: portfolioSectionRef.current, start: "top bottom", end: "bottom top", scrub: 2 }
-    });
+    // The y:-900 scrubbed transform forces the browser to repaint a huge
+    // section on every scroll frame on mobile — a major source of jank.
+    // Skip it on phones; the section scrolls naturally without it.
+    if (!isMobileView) {
+      gsap.to(portfolioSectionRef.current, {
+        y: -900,
+        scrollTrigger: { trigger: portfolioSectionRef.current, start: "top bottom", end: "bottom top", scrub: 2 }
+      });
+    }
 
     ScrollTrigger.create({
       trigger: portfolioSectionRef.current, start: "center bottom", fastScrollEnd: true,
@@ -330,7 +335,9 @@ function App() {
         className="relative w-full portfolio-panel z-[9999]"
         style={{
           minHeight: vh(100),
-          boxShadow: `0 -30px 80px -10px rgba(255,255,255,0.12), 0 -60px 120px -20px rgba(201,168,76,0.06), inset 0 1px 0 rgba(255,255,255,0.6), 0 30px 80px -10px rgba(0,0,0,0.35)`,
+          boxShadow: mobile
+            ? '0 -10px 30px -5px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.4)'
+            : `0 -30px 80px -10px rgba(255,255,255,0.12), 0 -60px 120px -20px rgba(201,168,76,0.06), inset 0 1px 0 rgba(255,255,255,0.6), 0 30px 80px -10px rgba(0,0,0,0.35)`,
         }}
       >
         <div className="max-w-7xl mx-auto px-6 sm:px-8 py-20">

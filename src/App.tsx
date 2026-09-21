@@ -334,7 +334,7 @@ function App() {
       <div
         ref={portfolioSectionRef}
         id="portfolio"
-        className="relative w-full portfolio-panel z-[9]"
+        className="relative w-full portfolio-panel z-[99]"
         style={{
           minHeight: vh(100),
           boxShadow: mobile

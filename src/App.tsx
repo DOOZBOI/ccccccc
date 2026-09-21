@@ -150,15 +150,17 @@ function App() {
       }).to(desktopParallaxEls, { y: 200, ease: "power1.out" });
     }
 
-    // The y:-900 scrubbed transform forces the browser to repaint a huge
-    // section on every scroll frame on mobile — a major source of jank.
-    // Skip it on phones; the section scrolls naturally without it.
-    if (!isMobileView) {
-      gsap.to(portfolioSectionRef.current, {
-        y: -900,
-        scrollTrigger: { trigger: portfolioSectionRef.current, start: "top bottom", end: "bottom top", scrub: 2 }
-      });
+    // Slide the portfolio up to reveal the contact section behind it.
+    // On mobile we use a lighter setup: will-change:transform keeps the
+    // slide on the GPU compositor layer (no repaint), and the scrub value
+    // is higher so it doesn't fight the native scroller as aggressively.
+    if (portfolioSectionRef.current) {
+      portfolioSectionRef.current.style.willChange = 'transform';
     }
+    gsap.to(portfolioSectionRef.current, {
+      y: () => isMobileView ? -window.innerHeight * 0.85 : -900,
+      scrollTrigger: { trigger: portfolioSectionRef.current, start: "top bottom", end: "bottom top", scrub: isMobileView ? 3 : 2 }
+    });
 
     ScrollTrigger.create({
       trigger: portfolioSectionRef.current, start: "center bottom", fastScrollEnd: true,
@@ -482,7 +484,7 @@ function App() {
       {showContact && (
         <div
           id="contact-section"
-          className={`fixed bottom-0 left-0 right-0 w-full overflow-hidden flex flex-col items-center justify-center bg-transparent opacity-0 animate-fade-in-delayed px-6 ${mobile ? 'z-[10000]' : 'z-30'}`}
+          className={`fixed bottom-0 left-0 right-0 w-full overflow-hidden flex flex-col items-center justify-center z-30 bg-transparent opacity-0 animate-fade-in-delayed px-6`}
           style={{
             height: window.innerWidth < 768 ? '100svh' : '100vh',
             animationDelay: '0.2s', 

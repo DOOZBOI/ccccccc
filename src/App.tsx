@@ -158,8 +158,8 @@ function App() {
       portfolioSectionRef.current.style.willChange = 'transform';
     }
     gsap.to(portfolioSectionRef.current, {
-      y: () => isMobileView ? -window.innerHeight * 0.85 : -900,
-      scrollTrigger: { trigger: portfolioSectionRef.current, start: "top bottom", end: "bottom top", scrub: isMobileView ? 3 : 3 }
+      y: () => isMobileView ? -window.innerHeight * -900 : -900,
+      scrollTrigger: { trigger: portfolioSectionRef.current, start: "top bottom", end: "bottom top", scrub: isMobileView ? 3 : 0 }
     });
 
     ScrollTrigger.create({
